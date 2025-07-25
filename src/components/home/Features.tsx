@@ -98,7 +98,7 @@ const Features: React.FC<FeaturesProps> = ({ onPageChange }) => {
                 Experience the Future
               </h3>
               <p className="text-xl text-white/80 mb-10 max-w-2xl mx-auto">
-                Join thousands of users already trading and saving with AfriRemit
+                Join thousands of users already trading and saving with Afrinet
               </p>
               <button 
                 onClick={handleGetStarted}
