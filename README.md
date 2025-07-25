@@ -1,12 +1,12 @@
-# AfriRemit Frontend 🌍
+# Afrinet Frontend 🌍
 
 > **The First Global DEX for African Stablecoins** - Built on Lisk Blockchain
 
-AfriRemit Frontend is a comprehensive DeFi application interface that connects African and international financial markets through innovative blockchain solutions. Our platform enables seamless cross-border transactions, traditional savings groups, and real-world utility payments using African and international stablecoins.
+Afrinet Frontend is a comprehensive DeFi application interface that connects African and international financial markets through innovative blockchain solutions. Our platform enables seamless cross-border transactions, traditional savings groups, and real-world utility payments using African and international stablecoins.
 
 ## 🎯 Platform Overview
 
-AfriRemit Frontend provides an intuitive interface for the **first decentralized exchange (DEX) built on the Lisk blockchain** that enables **global access** to African and international stablecoins. The application features:
+Afrinet Frontend provides an intuitive interface for the **first decentralized exchange (DEX) built on the Lisk blockchain** that enables **global access** to African and international stablecoins. The application features:
 
 - 🏠 **Dashboard** - Comprehensive wallet balance view and exchange rates
 - 🔄 **Token Swapping** - Cross-border stablecoin swaps with liquidity provision
@@ -107,7 +107,7 @@ Testnet token distribution for seamless testing:
 Fiat-crypto conversion interface:
 
 #### **Currently Supported:**
-- **NGN ↔ AFX**: Nigerian Naira to AfriRemit stablecoin
+- **NGN ↔ AFX**: Nigerian Naira to Afrinet stablecoin
 - **NGN ↔ cNGN**: Nigerian Naira to cNGN stablecoin
 
 
@@ -205,17 +205,7 @@ const CONTRACTS = {
   PriceFeed: "0x..."     // Price oracle
 };
 
-// Supported Tokens
-const TOKENS = {
-  "0x88a4e1125FF42e0010192544EAABd78Db393406e": "USDT",
-  "0xa01ada077F5C2DB68ec56f1a28694f4d495201c9": "WETH", 
-  "0x207d9E20755fEe1924c79971A3e2d550CE6Ff2CB": "AFR",
-  "0xc5737615ed39b6B089BEDdE11679e5e1f6B9E768": "AFX",
-  "0x278ccC9E116Ac4dE6c1B2Ba6bfcC81F25ee48429": "cNGN",
-  "0x1255C3745a045f653E5363dB6037A2f854f58FBf": "cZAR",
-  "0x19a8a27E066DD329Ed78F500ca7B249D40241dC4": "cGHS",
-  "0x291ca1891b41a25c161fDCAE06350E6a524068d5": "cKES"
-};
+
 ```
 
 ---
@@ -256,7 +246,7 @@ Git
 ### Installation
 ```bash
 # Clone the repository
-git clone https://github.com/AfriRemit/frontend.git
+git clone https://github.com/Abuhaneeph/Afrinet/frontend.git
 cd frontend
 
 # Install dependencies
@@ -391,11 +381,11 @@ npm start
 
 ---
 
-**AfriRemit Frontend** - *Bridging African Finance with Global DeFi* 🌍
+**Afrinet Frontend** - *Bridging African Finance with Global DeFi* 🌍
 
 > Built with ❤️ for financial inclusion and powered by modern web technologies on Lisk blockchain. 
 > Providing the most intuitive interface for African stablecoin trading and traditional savings systems.
 
 ---
 
-*This documentation is maintained by the AfriRemit frontend team. For technical support, please visit our [GitHub repository](https://github.com/AfriRemit/frontend)*
+*This documentation is maintained by the Afrinet frontend team. For technical support, please visit our [GitHub repository](https://github.com/Afrinet/frontend)*

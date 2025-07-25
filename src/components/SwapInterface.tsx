@@ -1,6 +1,7 @@
 import React, { useState,useEffect } from 'react';
 import { ArrowUpDown, Settings, Info, X, Droplets } from 'lucide-react';
 import LiquidityInterface from './LiquidityInterface';
+import CrossChainInterface from './CrossChainInterface';
 import tokens from '@/lib/Tokens/tokens';
 import { ethers, formatEther, parseEther } from 'ethers';
 import { useContractInstances } from '@/provider/ContractInstanceProvider';
@@ -405,6 +406,10 @@ useEffect(()=>{
     return <LiquidityInterface onBackToSwap={() => setActiveTab('swap')} />;
   }
 
+  if (activeTab === 'crosschain') {
+    return <CrossChainInterface onBackToSwap={() => setActiveTab('swap')} />;
+  }
+
   return (
     <div className="max-w-lg mx-auto space-y-6">
       <div className="text-center">
@@ -435,6 +440,18 @@ useEffect(()=>{
           <Droplets className="w-4 h-4" />
           <span>Liquidity</span>
         </button>
+        
+        <button
+          onClick={() => setActiveTab('crosschain')}
+          className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors flex items-center justify-center space-x-1 ${
+            activeTab === 'crosschain'
+              ? 'bg-white text-stone-900 shadow-sm'
+              : 'text-stone-600 hover:text-stone-900'
+          }`}>
+          <span>Cross Chain</span>
+          </button>
+
+      
       </div>
 
       <div className="bg-white rounded-2xl p-6 shadow-sm border border-stone-200">
