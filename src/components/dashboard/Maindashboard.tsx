@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { formatEther, JsonRpcProvider } from 'ethers';
+import { formatEther } from 'ethers';
 
 import Currencies from '@/lib/Tokens/currencies';
 import { useContractInstances } from '@/provider/ContractInstanceProvider';
@@ -10,6 +10,11 @@ import tokens from '@/lib/Tokens/tokens';
 // Import the separated components
 import WalletNotConnected from './Notconnected';
 import ConnectedDashboard from './ConnectedDashboard';
+import SendMoney from '../SendMoney';
+import SwapInterface from '../SwapInterface';
+import OnrampOfframpInterface from '../BuyandSellInterface';
+import AjoEsusuInterface from '../SavingsInterface';
+import UtilityPaymentInterface from '../UtilityInterface';
 
 interface DashboardProps {
   onPageChange?: (page: string) => void;
@@ -29,6 +34,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onPageChange }) => {
   const [txLoading, setTxLoading] = useState<boolean>(false);
   const [txError, setTxError] = useState<string | null>(null);
   const [selectedToken, setSelectedToken] = useState<any>(null);
+  const [currentPage, setCurrentPage] = useState<string>('dashboard');
 
   // Get selected token based on currency
   useEffect(() => {
@@ -112,43 +118,77 @@ const Dashboard: React.FC<DashboardProps> = ({ onPageChange }) => {
   // Fetch transactions
   useEffect(() => {
     const fetchTransactions = async () => {
-      if (!isConnected || !address) return;
-
+      if (!isConnected || !address || !signer) return;
       setTxLoading(true);
       setTxError(null);
-
       try {
-        // Simulate fetching transactions (in real app, this would come from blockchain events)
-        const mockTransactions = [
-          {
-            hash: '0x1234567890abcdef1234567890abcdef12345678',
-            direction: 'sent' as const,
-            amount: '100.00',
-            token: 'cNGN',
-            counterparty: '0xabcdef1234567890abcdef1234567890abcdef12',
-            timestamp: Math.floor(Date.now() / 1000) - 3600
-          },
-          {
-            hash: '0xabcdef1234567890abcdef1234567890abcdef12',
-            direction: 'received' as const,
-            amount: '50.00',
-            token: 'cNGN',
-            counterparty: '0x1234567890abcdef1234567890abcdef12345678',
-            timestamp: Math.floor(Date.now() / 1000) - 7200
+        const provider = signer.provider;
+        if (!provider) throw new Error('No provider');
+        const fetchTokenTxs = async (token) => {
+          if (!token.address) return [];
+          let contract;
+          if (token.symbol === 'AFX') {
+            contract = await AFRISTABLE_CONTRACT_INSTANCE();
+          } else {
+            contract = await TEST_TOKEN_CONTRACT_INSTANCE(token.address);
           }
-        ];
-
-        setTransactions(mockTransactions);
+          if (!contract) return [];
+          const currentBlock = await provider.getBlockNumber();
+          const fromBlock = Math.max(currentBlock - 10000, 0);
+          const sentEvents = await contract.queryFilter(
+            contract.filters.Transfer(address, null),
+            fromBlock,
+            currentBlock
+          );
+          const receivedEvents = await contract.queryFilter(
+            contract.filters.Transfer(null, address),
+            fromBlock,
+            currentBlock
+          );
+          const sent = sentEvents.map(e => ({
+            hash: e.transactionHash,
+            blockNumber: e.blockNumber,
+            direction: 'sent',
+            counterparty: e.args?.to,
+            amount: parseFloat(formatEther(e.args?.value)),
+            token: token.symbol,
+            timestamp: null
+          }));
+          const received = receivedEvents.map(e => ({
+            hash: e.transactionHash,
+            blockNumber: e.blockNumber,
+            direction: 'received',
+            counterparty: e.args?.from,
+            amount: parseFloat(formatEther(e.args?.value)),
+            token: token.symbol,
+            timestamp: null
+          }));
+          return [...sent, ...received];
+        };
+        const txArrays = await Promise.all(tokens.filter(t => t.address).map(fetchTokenTxs));
+        let txs = txArrays.flat();
+        // Fetch timestamps for each unique block
+        const blockNumbers = Array.from(new Set(txs.map(tx => tx.blockNumber)));
+        const blockTimestamps = {};
+        if (provider && typeof provider.getBlock === 'function') {
+          await Promise.all(blockNumbers.map(async (bn) => {
+            const block = await provider.getBlock(bn);
+            blockTimestamps[bn] = block?.timestamp;
+          }));
+        }
+        txs = txs.map(tx => ({ ...tx, timestamp: blockTimestamps[tx.blockNumber] }));
+        txs.sort((a, b) => b.blockNumber - a.blockNumber);
+        setTransactions(txs);
       } catch (error) {
-        console.error('Error fetching transactions:', error);
         setTxError('Failed to load transactions');
       } finally {
         setTxLoading(false);
       }
     };
-
     fetchTransactions();
-  }, [isConnected, address]);
+    const interval = setInterval(fetchTransactions, 30000);
+    return () => clearInterval(interval);
+  }, [isConnected, address, signer, TEST_TOKEN_CONTRACT_INSTANCE, AFRISTABLE_CONTRACT_INSTANCE]);
 
   // Calculate portfolio growth (simulated)
   useEffect(() => {
@@ -172,18 +212,45 @@ const Dashboard: React.FC<DashboardProps> = ({ onPageChange }) => {
 
   // Handle quick actions
   const handleQuickAction = (action: string) => {
-    console.log('Quick action clicked:', action);
-    if (onPageChange) {
-      console.log('Calling onPageChange with:', action);
-      onPageChange(action);
-    } else {
-      console.log('onPageChange is not available');
+    switch (action) {
+      case 'send':
+        setCurrentPage('send');
+        break;
+      case 'swap':
+        setCurrentPage('swap');
+        break;
+      case 'Buy/Sell':
+        setCurrentPage('buySell');
+        break;
+      case 'savings':
+        setCurrentPage('savings');
+        break;
+      case 'utility':
+        setCurrentPage('utility');
+        break;
+      default:
+        setCurrentPage('dashboard');
     }
   };
 
   // Render based on connection status
   if (!isConnected) {
     return <WalletNotConnected exchangeRates={exchangeRates} />;
+  }
+  if (currentPage === 'send') {
+    return <SendMoney />;
+  }
+  if (currentPage === 'swap') {
+    return <SwapInterface />;
+  }
+  if (currentPage === 'buySell') {
+    return <OnrampOfframpInterface />;
+  }
+  if (currentPage === 'savings') {
+    return <AjoEsusuInterface />;
+  }
+  if (currentPage === 'utility') {
+    return <UtilityPaymentInterface />;
   }
 
   return (

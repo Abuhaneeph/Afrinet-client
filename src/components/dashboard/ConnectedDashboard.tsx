@@ -115,7 +115,8 @@ const ConnectedDashboard: React.FC<ConnectedDashboardProps> = ({
             <button 
               key={action.key}
               onClick={() => onQuickAction(action.key)}
-              className="group bg-white/80 backdrop-blur-sm border border-slate-200 rounded-2xl p-6 hover:shadow-xl transition-all duration-300 hover:scale-105 cursor-pointer active:scale-95"
+              className="group bg-white/80 backdrop-blur-sm border border-slate-200 rounded-2xl p-6 hover:shadow-xl transition-all duration-300 hover:scale-105 cursor-pointer active:scale-95 focus:ring-2 focus:ring-emerald-400 focus:outline-none"
+              tabIndex={0}
             >
               <div className={`w-12 h-12 bg-gradient-to-br ${action.gradient} rounded-2xl flex items-center justify-center mb-4 shadow-sm group-hover:scale-110 transition-transform duration-300`}>
                 {React.createElement(action.icon, { className: "w-6 h-6 text-white" })}
