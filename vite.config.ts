@@ -19,7 +19,5 @@ export default defineConfig(({ mode }) => ({
       "@": path.resolve(__dirname, "./src"),
     },
   },
-   rollupOptions: {
-      external: ['ox', '@reown/appkit', '@reown/appkit-controllers']
-    }
+  
 }));
